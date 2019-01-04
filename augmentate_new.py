@@ -22,9 +22,8 @@ def load_image_data(path):
 
 	image = cv2.imread(path)	
  	if image.shape[0] < image.shape[1]:
- 		#image = cv2.transpose(image)
  		image = cv2.flip(image, flipCode=1)
-	im_data = cv2.resize(image, (500,500))
+	im_data = cv2.resize(image, (224,224))
 	return im_data
 
 def main():
@@ -35,7 +34,7 @@ def main():
                 iaa.ContrastNormalization((0.8, 1.6)),
                 iaa.AddToHueAndSaturation((-21, 21)),
                 iaa.SaltAndPepper(p=0.1),
-                iaa.Scale({"width":500, "height":"keep-aspect-ratio"}, 1),
+                iaa.Scale({"width":224, "height":"keep-aspect-ratio"}, 1),
                 iaa.CropAndPad(
 	                percent=(-0.05, 0.1),
 	                pad_mode=ia.ALL,
@@ -53,7 +52,6 @@ def main():
 	for im_path in paths:
 		#Deixa as imagens originais no mesmo tamanho
 		im_data = load_image_data(im_path)
-		#cv2.imshow("frame", im_data)
 		fname = im_path[41:]
 		paste = im_path[36:40]
 		ensure_folder('data/DeepLearningFilesPosAug/'+str(paste))
@@ -72,58 +70,6 @@ def main():
 			dst_path = os.path.join(dst_folder, paste, fname)
 			#print dst_path
 			cv2.imwrite(dst_path, im_data_aug)
-
-	# 	if cv2.waitKey(50) & 0xFF == ord('q'):
-	# 		break
-	
-	# cv2.destroyAllWindows()
-
-		#print im_path
-		#im_data = load_image_data(im_path)
-		#os.path.join(path, image_name)
-		#im_data = cv2.imread(im_path)
-		#fname = im_path[41:]
-		#dst_path = os.path.join(dst_folder, fname)
-
-		#Salva a imagem "base/original"
-		#cv2.imwrite(dst_path, im_data)
-		#cv2.imshow("frameA",im_data)
-		
-		# for i in range(1):
-		# 	fname = im_path[41:] + str(i)
-		# 	im_data_aug = aug_seq.augment_image(im_data)	
-		# 	#cv2.imshow("frame", im_data_aug)
-		# 	dst_path = os.path.join(dst_folder, fname)
-		# 	#Salva uma imagem com "augmentate" da imagem "base/original" (repete 100 vezes) 	
-		# 	cv2.imshow("frameB",im_data)
-		# 	#cv2.imwrite(dst_path, im_data_aug)
-
-
-
-		#print('fname eh: '+ fname)
-		#features = get_features([im_data[np.newaxis,...],0])[0]
-		#inc+= 1
-		#key = "f" + str(inc)
-		#print key
-		#dict_features[key] = features
-		#print features.shape, features.max(), features.min(), features.mean()
-
-
-
-
-		# cv2.imshow("frameB",im_data)
-		# cv2.waitKey(0)
-	
-
-		#im_path = "/home/ml/Pictures/frog.jpg"
-		
-
-		
-
-		#	if cv2.waitKey(50) & 0xFF == ord('q'):
-		#		break
-		
-		#cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     if __name__ == "__main__":
