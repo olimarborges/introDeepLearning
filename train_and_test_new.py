@@ -135,13 +135,13 @@ def carrega_dados_02(dict_labels):
 
     # create all the machine learning models
     models = []
-    models.append(('Logistic Regression (LR)', LogisticRegression(random_state=9)))
-    models.append(('Linear Discriminant Analysis (LDA)', LinearDiscriminantAnalysis()))
-    models.append(('K-Nearest Neighbors (KNN)', KNeighborsClassifier()))
-    models.append(('Decision Trees (CART)', DecisionTreeClassifier(random_state=9)))
-    models.append(('Random Forests (RF)', RandomForestClassifier(n_estimators=num_trees, random_state=9)))
-    models.append(('Gaussian Naive Bayes (NB)', GaussianNB()))
-    models.append(('Support Vector Machine (SVM)', SVC(random_state=9)))
+    models.append(('1 - Logistic Regression (LR)', LogisticRegression(random_state=9)))
+    models.append(('2 - Linear Discriminant Analysis (LDA)', LinearDiscriminantAnalysis()))
+    models.append(('3 - K-Nearest Neighbors (KNN)', KNeighborsClassifier()))
+    models.append(('4 - Decision Trees (CART)', DecisionTreeClassifier(random_state=9)))
+    models.append(('5 - Random Forests (RF)', RandomForestClassifier(n_estimators=num_trees, random_state=9)))
+    models.append(('6 - Gaussian Naive Bayes (NB)', GaussianNB()))
+    models.append(('7 - Support Vector Machine (SVM)', SVC(random_state=9)))
 
     # variables to hold the results and names
     results = []
@@ -165,8 +165,8 @@ def carrega_dados_02(dict_labels):
 
 
     # verify the shape of the feature vector and labels
-    print "[STATUS] features shape: {}".format(np.array(global_features).shape)
-    print "[STATUS] labels shape: {}".format(np.array(labels).shape)
+    # print "[STATUS] features shape: {}".format(np.array(global_features).shape)
+    # print "[STATUS] labels shape: {}".format(np.array(labels).shape)
 
     # split the training and testing data
     (trainDataGlobal, testData, trainLabelsGlobal, testLabelsGlobal) = train_test_split(np.array(global_features),
@@ -174,28 +174,25 @@ def carrega_dados_02(dict_labels):
                                                                       test_size=test_size,
                                                                       random_state=seed)
 
-    print "[STATUS] splitted train and test data..."
-    print "Train data  : {}".format(np.array(trainDataGlobal).shape)
-    print "Test data   : {}".format(np.array(testData).shape)
-    print "Train labels: {}".format(np.array(trainLabelsGlobal).shape)
-    print "Test labels : {}".format(np.array(testLabelsGlobal).shape)
+    # print "[STATUS] splitted train and test data..."
+    # print "Train data  : {}".format(np.array(trainDataGlobal).shape)
+    # print "Test data   : {}".format(np.array(testData).shape)
+    # print "Train labels: {}".format(np.array(trainLabelsGlobal).shape)
+    # print "Test labels : {}".format(np.array(testLabelsGlobal).shape)
 
-
+    # print("Processando as acurácias dos 7 modelos...")
     # filter all the warnings
     import warnings
     warnings.filterwarnings('ignore')
 
     # 10-fold cross validation
-    # for name, model in models:
-    #     kfold = KFold(n=1217,n_folds=10, random_state=7)
-    #     cv_results = cross_val_score(model, trainDataGlobal, trainLabelsGlobal, cv=kfold, scoring=scoring)
-    #     results.append(cv_results)
-    #     names.append(name)
-    #     msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-    #     print(msg)
-
-    # print("Informe a ABREVIATURA qual modelo você quer utilizar para testar o classificação:")
-    # modelo = input()
+    for name, model in models:
+        kfold = KFold(n=1217,n_folds=10, random_state=7)
+        cv_results = cross_val_score(model, trainDataGlobal, trainLabelsGlobal, cv=kfold, scoring=scoring)
+        results.append(cv_results)
+        names.append(name)
+        msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+        print(msg)
 
     testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features)
 
@@ -211,23 +208,26 @@ def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features):
               4 : 'Gol',
               5 : 'Ford Ka'
              }
-
+             
+    print("Como a melhor acurácia foi utilizando o modelo de Regressão Logística,")
+    print("foi com esse modelo que foi utilizado para testar com as imagens de testes....")
     # Logistic Regression (LR)
     LR = LogisticRegression(random_state=9)
     # Linear Discriminant Analysis (LDA)
-    # LDA = LinearDiscriminantAnalysis()
+    LDA = LinearDiscriminantAnalysis()
     # # K-Nearest Neighbors (KNN)
-    # KNN = KNeighborsClassifier()
+    KNN = KNeighborsClassifier()
     # # Decision Trees (CART)
-    # CART = DecisionTreeClassifier(random_state=9)
+    CART = DecisionTreeClassifier(random_state=9)
     # # Random Forests (RF)
-    # RF = RandomForestClassifier(n_estimators=num_trees, random_state=9)
+    RF = RandomForestClassifier(n_estimators=num_trees, random_state=9)
     # # 'Gaussian Naive Bayes (NB)
-    # NB = GaussianNB()
+    NB = GaussianNB()
     # # Support Vector Machine (SVM)
-    # SVM = SVC(random_state=9)
+    SVM = SVC(random_state=9)
 
-    clf = LR
+    # Trocar aqui pela abreviatura do modelo que deseja utilizar
+    clf = LR 
     # fit the training data to the model
     clf.fit(trainDataGlobal, trainLabelsGlobal)
 
@@ -241,7 +241,7 @@ def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features):
     num_samples = 381 # são 381 imagens para teste
     test_indexes = random.sample(range(num_samples), 20)
     # print 'test_indexes', test_indexes
-
+    print("V")
     for i in test_indexes:
         # print 'i: ', i
         file = paths[i]
