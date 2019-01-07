@@ -28,14 +28,14 @@ def main():
 	net = load_convnet()
 	get_features = K.function([net.layers[0].input, K.learning_phase()], [net.get_layer("flatten_2").output])
 
-	base_path = 'data/DeepLearningFilesPosAug'
+	base_path = 'data/train'
 	paths = find_paths(base_path)
-	#print paths
+	print paths
 
 	dict_features = {}
 
 	for image_path in paths:
-		# print image_path
+		print image_path
 		im_data = cv2.imread(image_path)
 		fname = image_path[34:]
 		print fname

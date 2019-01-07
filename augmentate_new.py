@@ -66,7 +66,7 @@ def main():
 			im_data_aug = aug_seq.augment_image(im_data)
 			fname = im_path[41:-4] + str(i) + '.jpg'
 			#print('Fname Aug: ' + fname)
-			cv2.imshow("frame", im_data_aug)
+			# cv2.imshow("frame", im_data_aug)
 			dst_path = os.path.join(dst_folder, paste, fname)
 			#print dst_path
 			cv2.imwrite(dst_path, im_data_aug)
