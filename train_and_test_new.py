@@ -186,22 +186,22 @@ def carrega_dados_02(dict_labels):
     warnings.filterwarnings('ignore')
 
     # 10-fold cross validation
-    for name, model in models:
-        kfold = KFold(n=1217,n_folds=10, random_state=7)
-        cv_results = cross_val_score(model, trainDataGlobal, trainLabelsGlobal, cv=kfold, scoring=scoring)
-        results.append(cv_results)
-        names.append(name)
-        msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-        print(msg)
+    # for name, model in models:
+    #     kfold = KFold(n=1217,n_folds=10, random_state=7)
+    #     cv_results = cross_val_score(model, trainDataGlobal, trainLabelsGlobal, cv=kfold, scoring=scoring)
+    #     results.append(cv_results)
+    #     names.append(name)
+    #     msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+    #     print(msg)
 
     # print("Informe a ABREVIATURA qual modelo você quer utilizar para testar o classificação:")
     # modelo = input()
 
-    testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features, modelo)
+    testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features)
 
 
 
-def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features, modelo):
+def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features):
 
                     #chave : valor
     labels_dict = { 
