@@ -4,6 +4,9 @@ import imgaug as ia
 from imgaug import augmenters as iaa
 from utils import load_model
 
+from console_progressbar import ProgressBar
+import time
+
 def ensure_folder(folder):
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -17,14 +20,14 @@ def find_paths(path):
 
 	return paths
 
-#Deixa as imagens no mesmo tamanho
-def load_image_data(path):
+# #Deixa as imagens no mesmo tamanho
+# def load_image_data(path):
 
-	image = cv2.imread(path)	
- 	if image.shape[0] < image.shape[1]:
- 		image = cv2.flip(image, flipCode=1)
-	im_data = cv2.resize(image, (224,224))
-	return im_data
+# 	image = cv2.imread(path)	
+#  	if image.shape[0] < image.shape[1]:
+#  		image = cv2.flip(image, flipCode=1)
+# 	im_data = cv2.resize(image, (224,224))
+# 	return im_data
 
 def main():
 
@@ -43,28 +46,35 @@ def main():
             ],
             random_order=True)
 
-	ensure_folder('data/DeepLearningFilesPosAug')
-	dst_folder = 'data/DeepLearningFilesPosAug'
-	base_path = "/home/ml/datasets/DeepLearningFiles"
+	ensure_folder('data/train')
+	dst_folder = 'data/train'
+	base_path = 'data/pre_train'
 
 	paths = find_paths(base_path)
 
+	pb = ProgressBar(total=100, prefix='Realizando 'augmentate'...', suffix='', decimals=3, length=50, fill='=')
+	i = 0
 	for im_path in paths:
-		#Deixa as imagens originais no mesmo tamanho
-		im_data = load_image_data(im_path)
-		fname = im_path[41:]
-		paste = im_path[36:40]
-		ensure_folder('data/DeepLearningFilesPosAug/'+str(paste))
+		# print 'im_path', im_path
+		im_data = cv2.imread(im_path)
+		# im_data = load_image_data(im_path)
+		fname = im_path[20:]
+		# print 'fname: ', fname
+		paste = im_path[15:19]
+		# print 'paste: ', paste
+		ensure_folder('data/train/'+str(paste))
 		#print paste
 
 		#Salva a imagem 'original' sem augmentate no diretorio 'dst_folder'
 		dst_path = os.path.join(dst_folder, paste, fname)
 		cv2.imwrite(dst_path, im_data)
 
+		pb.print_progress_bar((i + 1) * 100 / len(paths))
+
 		#Faz o augmentate da imagem original e salva no diretorio 'dst_folder'
 		for i in range(10):
 			im_data_aug = aug_seq.augment_image(im_data)
-			fname = im_path[41:-4] + str(i) + '.jpg'
+			fname = im_path[20:-4] + str(i) + '.jpg'
 			#print('Fname Aug: ' + fname)
 			# cv2.imshow("frame", im_data_aug)
 			dst_path = os.path.join(dst_folder, paste, fname)

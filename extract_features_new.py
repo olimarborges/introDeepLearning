@@ -4,6 +4,8 @@ import keras.backend as K
 from utils_new import load_model
 import numpy as np
 
+from console_progressbar import ProgressBar
+import time
 
 def ensure_folder(folder):
     if not os.path.exists(folder):
@@ -30,18 +32,41 @@ def main():
 
 	base_path = 'data/train'
 	paths = find_paths(base_path)
-	print paths
+	# print paths
 
 	dict_features = {}
 
+	pb = ProgressBar(total=100, prefix='Extraindo features train...', suffix='', decimals=3, length=50, fill='=')
+	i = 0
 	for image_path in paths:
-		print image_path
+		pb.print_progress_bar((i + 1) * 100 / len(paths))
+		# print 'image_path: ', image_path
 		im_data = cv2.imread(image_path)
-		fname = image_path[34:]
-		print fname
+		fname = image_path[16:]
+		# print 'fname: ', fname
 		features = get_features([im_data[np.newaxis,...],0])[0]
-		print 'features: ', features
+		# print 'features: ', features
 		dict_features[fname] = features
+		i = i + 1
+
+	np.savez_compressed("cars_train.npz",**dict_features)
+	
+	base_path = 'data/test'
+	paths = find_paths(base_path)
+
+	dict_features = {}
+	pb = ProgressBar(total=100, prefix='Extraindo features test...', suffix='', decimals=3, length=50, fill='=')
+	i = 0
+	for image_path in paths:
+		pb.print_progress_bar((i + 1) * 100 / len(paths))
+		# print 'image_path: ', image_path
+		im_data = cv2.imread(image_path)
+		fname = image_path[15:]
+		# print 'fname: ', fname
+		features = get_features([im_data[np.newaxis,...],0])[0]
+		# print 'features: ', features
+		dict_features[fname] = features
+		i = i + 1
 		
 	np.savez_compressed("cars_test.npz",**dict_features)
 

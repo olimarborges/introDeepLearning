@@ -23,9 +23,20 @@ def find_paths(path):
 
     return paths
 
-def save_train_and_test_data(fnames, fnamesPaste, dict_labels):
+#Deixa as imagens no mesmo tamanho
+def load_image_data(path):
 
-    src_folder = 'data/DeepLearningFilesPosAug'
+    image = cv.imread(path)    
+    if image.shape[0] < image.shape[1]:
+        image = cv.flip(image, flipCode=1)
+    im_data = cv.resize(image, (224,224))
+    return im_data
+
+def save_train_and_test_data(fnames, fnamesPaste, imagesPaths, dict_labels):
+
+    # src_folder = 'data/DeepLearningFilesPosAug'
+    # src_folder = '/home/ml/datasets/DeepLearningFiles'
+
     num_samples = len(fnames)
     # print 'num_samples: ', num_samples #1903
 
@@ -41,18 +52,23 @@ def save_train_and_test_data(fnames, fnamesPaste, dict_labels):
     for i in range(num_samples):
         fname = fnames[i]
         fnamePaste = fnamesPaste[i]
+        image_path = imagesPaths[i]
         # print 'fname: ', fname
         # print 'fnamePaste', fnamePaste
 
-        src_path = os.path.join(src_folder, fnamePaste)
-        src_image = cv.imread(src_path)
+        # src_path = os.path.join(src_folder, fnamePaste)
+
+        #Deixa as imagens originais no mesmo tamanho
+        im_data = load_image_data(image_path)
+
+        # src_image = cv.imread(im_data)
         # print 'src_path: ', src_path
         # print 'src_image: ', src_image
         
         pb.print_progress_bar((i + 1) * 100 / num_samples)
 
         if i in train_indexes:
-            dst_folder = 'data/train'
+            dst_folder = 'data/pre_train'
         else:
             dst_folder = 'data/test'
 
@@ -64,7 +80,8 @@ def save_train_and_test_data(fnames, fnamesPaste, dict_labels):
             os.makedirs(dst_path)
         dst_path = os.path.join(dst_path, fname)
 
-        cv.imwrite(dst_path, src_image)
+        
+        cv.imwrite(dst_path, im_data)
 
     # save_valid_data(num_train)
 
@@ -144,25 +161,27 @@ if __name__ == '__main__':
                 }
 
     # ensure_folder('data/pre_train')
-    ensure_folder('data/train')
+    ensure_folder('data/pre_train')
     # ensure_folder('data/valid')
     ensure_folder('data/test')
 
-    base_path = 'data/DeepLearningFilesPosAug'
+    base_path = '/home/ml/datasets/DeepLearningFiles'
     paths = find_paths(base_path)
 
     #Carrega os nomes das imagens em 'fnames'
     fnames = []
     fnamesPaste = []
+    imagesPaths = []
     for image_path in paths:
-        #print image_path
-        fname = image_path[34:]
+        # print image_path
+        fname = image_path[41:]
         # print 'fname: ', fname
-        fnamePaste = image_path[29:]
-        #print 'fnamesPaste: ', fnamePaste
+        fnamePaste = image_path[36:]
+        # print 'fnamesPaste: ', fnamePaste
         fnames.append(fname)
         fnamesPaste.append(fnamePaste)
+        imagesPaths.append(image_path)
 
     #print 'fnamesPaste: ', fnamesPaste
 
-    save_train_and_test_data(fnames, fnamesPaste, dict_labels)
+    save_train_and_test_data(fnames, fnamesPaste, imagesPaths, dict_labels)

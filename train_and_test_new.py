@@ -131,7 +131,7 @@ def carrega_dados_01(dict_labels):
 
 
 def carrega_dados_02(dict_labels):
-    features = np.load("cars.npz")
+    features = np.load("cars_train.npz")
 
     # create all the machine learning models
     models = []
@@ -187,19 +187,19 @@ def carrega_dados_02(dict_labels):
 
     # 10-fold cross validation
     for name, model in models:
-        kfold = KFold(n=1217,n_folds=10, random_state=7)
+        kfold = KFold(n=1214,n_folds=10, random_state=7)
         cv_results = cross_val_score(model, trainDataGlobal, trainLabelsGlobal, cv=kfold, scoring=scoring)
         results.append(cv_results)
         names.append(name)
         msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
         print(msg)
 
-    testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features)
+    testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal)
 
 
 
-def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features):
-
+def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal):
+    features = np.load("cars_test.npz")
                     #chave : valor
     labels_dict = { 
               1 : 'Onix', 
@@ -210,7 +210,7 @@ def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features):
              }
              
     print("Como a melhor acurácia foi utilizando o modelo de Regressão Logística,")
-    print("foi com esse modelo que foi utilizado para testar com as imagens de testes....")
+    print("foi com esse modelo que foi utilizado para testar com as imagens de teste....")
     # Logistic Regression (LR)
     LR = LogisticRegression(random_state=9)
     # Linear Discriminant Analysis (LDA)
@@ -238,13 +238,14 @@ def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features):
     paths = find_paths(test_path)
 
     # print 'paths[1]: ', paths[288]
-    num_samples = 381 # são 381 imagens para teste
-    test_indexes = random.sample(range(num_samples), 20)
+    num_samples = 35 # são 381 imagens para teste
+    # test_indexes = random.sample(range(num_samples), 20)
     # print 'test_indexes', test_indexes
-    print("V")
-    for i in test_indexes:
+    for file in paths:
+    # for i in test_indexes:
         # print 'i: ', i
-        file = paths[i]
+        # file = paths[i]
+        # print 'file: ', file
         # read the image
         image = cv2.imread(file)
 
@@ -265,9 +266,11 @@ def testando_melhor_classificador(trainDataGlobal, trainLabelsGlobal, features):
         cv2.putText(image, labels_dict[prediction], (20,30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,255), 3)
 
         # display the output image
-        plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        plt.show()
+        # plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        # plt.show()
+    y_test = clf.predict()
 
+    print("Acurácia: " + str(accuracy_score(y_test, y_pred)*100)+"%")
 
 if __name__ == '__main__':
 
